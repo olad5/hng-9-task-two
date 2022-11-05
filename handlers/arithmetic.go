@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"strconv"
 )
 
 type ArithemticOperationResponse struct {
@@ -13,10 +12,21 @@ type ArithemticOperationResponse struct {
 	OperationType string `json:"operation_type"`
 }
 
+type RequestBody struct {
+	Operation_type string `json:"operation_type"`
+	X              int    `json:"x"`
+	Y              int    `json:"y"`
+}
+
 func PerformArithemticOperation(w http.ResponseWriter, r *http.Request) {
-	var operationType = r.FormValue("operation_type")
-	x, _ := strconv.ParseInt(r.FormValue("x"), 10, 64)
-	y, _ := strconv.ParseInt(r.FormValue("y"), 10, 64)
+
+	var requestBody RequestBody
+
+	json.NewDecoder(r.Body).Decode(&requestBody)
+
+	var operationType = requestBody.Operation_type
+	x := int64(requestBody.X)
+	y := int64(requestBody.Y)
 
 	switch operationType {
 	case "addition":
